@@ -5,7 +5,7 @@ from flask import Flask, render_template, jsonify, request
 from pymongo import MongoClient
 from datetime import datetime
 
-dotenv_path = join(dirname(__file__), '.env')
+dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
 MONGODB_URI = os.environ.get("MONGODB_URI")
@@ -15,6 +15,7 @@ client = MongoClient(MONGODB_URI)
 db = client[DB_NAME]
 
 app = Flask(__name__)
+
 
 @app.route("/")
 def home():
@@ -42,7 +43,16 @@ def save_diary():
     extension = profile.filename.split(".")[-1]
     profilename = f"static/profile{mytime}.{extension}"
     profile.save(profilename)
-    doc = {"file": filename, "profile": profilename, "title": title_receive, "content": content_receive}
+
+    time = today.strftime("%Y.%m.%d")
+
+    doc = {
+        "file": filename,
+        "profile": profilename,
+        "title": title_receive,
+        "content": content_receive,
+        "time": time,
+    }
     db.diary.insert_one(doc)
     return jsonify({"msg": "Upload complete!"})
 
